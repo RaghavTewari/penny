@@ -131,6 +131,15 @@ export async function updateBudget(id: string, budget: number): Promise<Category
   return mapCategory(data)
 }
 
+/** Set budgets for many categories at once (used by first-run onboarding). */
+export async function updateBudgets(updates: { id: string; budget: number }[]): Promise<void> {
+  const results = await Promise.all(
+    updates.map((u) => supabase.from('categories').update({ budget: u.budget }).eq('id', u.id)),
+  )
+  const failed = results.find((r) => r.error)
+  if (failed?.error) throw failed.error
+}
+
 /**
  * One-off: load the prototype's June/May sample transactions for the current
  * user, resolving each sample's category name to the user's seeded category.

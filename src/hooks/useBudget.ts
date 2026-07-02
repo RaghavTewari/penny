@@ -16,6 +16,7 @@ import {
   insertTransaction,
   seedSampleData,
   updateBudget,
+  updateBudgets,
   updateTransaction,
   type TxInput,
 } from '@/lib/db'
@@ -155,6 +156,16 @@ export function useUpdateBudget() {
       if (ctx) qc.setQueryData(qk.categories, ctx.prev)
     },
     onSettled: () => {
+      qc.invalidateQueries({ queryKey: qk.categories })
+    },
+  })
+}
+
+export function useUpdateBudgets() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (updates: { id: string; budget: number }[]) => updateBudgets(updates),
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: qk.categories })
     },
   })
