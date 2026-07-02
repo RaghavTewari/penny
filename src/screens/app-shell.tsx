@@ -6,7 +6,7 @@ import { Stats } from '@/screens/stats'
 import { Settings } from '@/screens/settings'
 import { AddSheet } from '@/screens/add-sheet'
 import { CategoryDetailSheet } from '@/screens/category-detail-sheet'
-import { useMonthData, useSeedSample } from '@/hooks/useBudget'
+import { useMonthData } from '@/hooks/useBudget'
 import { addMonth, monthOf, todayISO } from '@/lib/money'
 import type { CategoryStat, Transaction } from '@/lib/types'
 
@@ -18,8 +18,7 @@ type HomeRouteProps = {
 }
 
 function HomeRoute({ month, currentMonth, onMonth, onOpenCat }: HomeRouteProps) {
-  const { data, isLoading, isError, hasTransactions } = useMonthData(month)
-  const seed = useSeedSample()
+  const { data, isLoading, isError } = useMonthData(month)
 
   const canNext = month < currentMonth
   const canPrev = true
@@ -36,34 +35,15 @@ function HomeRoute({ month, currentMonth, onMonth, onOpenCat }: HomeRouteProps) 
   }
 
   return (
-    <>
-      {!hasTransactions && (
-        <div className="px-4 pt-4">
-          <div className="flex items-center justify-between gap-3 rounded-card border border-border bg-surface p-4 shadow-[var(--shadow-soft-sm)]">
-            <div className="text-[13.5px] text-muted">
-              No transactions yet. Load the sample month to explore.
-            </div>
-            <button
-              onClick={() => seed.mutate()}
-              disabled={seed.isPending}
-              className="shrink-0 rounded-full px-3.5 py-2 text-[13px] font-bold text-accent-ink disabled:opacity-60"
-              style={{ background: 'var(--accent)' }}
-            >
-              {seed.isPending ? 'Loading…' : 'Load sample'}
-            </button>
-          </div>
-        </div>
-      )}
-      <Home
-        d={data}
-        month={month}
-        canPrev={canPrev}
-        canNext={canNext}
-        onPrev={() => onMonth(addMonth(month, -1))}
-        onNext={() => canNext && onMonth(addMonth(month, 1))}
-        onOpenCat={onOpenCat}
-      />
-    </>
+    <Home
+      d={data}
+      month={month}
+      canPrev={canPrev}
+      canNext={canNext}
+      onPrev={() => onMonth(addMonth(month, -1))}
+      onNext={() => canNext && onMonth(addMonth(month, 1))}
+      onOpenCat={onOpenCat}
+    />
   )
 }
 
