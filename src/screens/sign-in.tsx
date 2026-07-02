@@ -35,7 +35,7 @@ export function SignIn() {
         >
           <Icon name="wallet" size={32} stroke={2.2} />
         </div>
-        <h1 className="text-[28px] font-extrabold tracking-[-0.8px]">Budgie</h1>
+        <h1 className="text-[28px] font-extrabold tracking-[-0.8px]">Penny</h1>
         <p className="mt-1 text-sm text-muted">
           Log a spend, see the impact instantly.
         </p>

@@ -17,7 +17,7 @@ type AccentState = {
 }
 
 const AccentContext = createContext<AccentState | undefined>(undefined)
-const STORAGE_KEY = 'budgie.accent'
+const STORAGE_KEY = 'penny.accent'
 const DEFAULT = ACCENTS[0]
 
 /** Push the accent + its derived tokens onto the root as inline CSS vars. */

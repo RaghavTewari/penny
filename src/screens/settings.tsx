@@ -203,7 +203,7 @@ export function Settings({ month }: { month: string }) {
         Sign out
       </button>
 
-      <div className="py-2 text-center text-xs text-faint">Budgie · single-user</div>
+      <div className="py-2 text-center text-xs text-faint">Penny · single-user</div>
 
       <EditBudgetSheet
         open={budgetOpen}

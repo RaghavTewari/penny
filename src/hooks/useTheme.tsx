@@ -10,7 +10,7 @@ type Theme = 'light' | 'dark'
 type ThemeState = { theme: Theme; toggle: () => void; setTheme: (t: Theme) => void }
 
 const ThemeContext = createContext<ThemeState | undefined>(undefined)
-const STORAGE_KEY = 'budgie.theme'
+const STORAGE_KEY = 'penny.theme'
 
 function initialTheme(): Theme {
   const saved = localStorage.getItem(STORAGE_KEY)

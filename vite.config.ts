@@ -13,8 +13,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icon-192.png', 'icon-512.png'],
       manifest: {
-        name: 'Budgie — Budget',
-        short_name: 'Budgie',
+        name: 'Penny — Budget',
+        short_name: 'Penny',
         description:
           'A warm, single-user budgeting tracker. Log a spend, see the impact instantly.',
         start_url: '.',

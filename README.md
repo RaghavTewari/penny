@@ -1,4 +1,4 @@
-# Budgie
+# Penny
 
 A warm, single-user personal budgeting PWA. Log a spend, see the impact instantly.
 
