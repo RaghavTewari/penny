@@ -1,0 +1,105 @@
+@import 'tailwindcss';
+
+/* Dark mode driven by a `.dark` class on <html> (persisted theme). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ──────────────────────────────────────────────────────────────
+   Design tokens (from the Budgie handoff). Warm, friendly palette.
+   Values live as CSS vars so they flip cleanly between light/dark;
+   @theme inline below exposes them as Tailwind color/radius utilities.
+   ────────────────────────────────────────────────────────────── */
+:root {
+  --bg: #faf5ee;
+  --surface: #ffffff;
+  --surface-2: #f4ece0;
+  --text: #2a231d;
+  --muted: #8c8175;
+  --faint: #b7ac9e;
+  --border: #eee5d7;
+
+  --good: #3fa873;
+  --warn: #d9912b;
+  --bad: #dc5b45;
+  --good-soft: rgba(63, 168, 115, 0.14);
+  --warn-soft: rgba(217, 145, 43, 0.14);
+  --bad-soft: rgba(220, 91, 69, 0.14);
+
+  --shadow-soft: 0 10px 30px rgba(120, 90, 50, 0.1);
+  --shadow-soft-sm: 0 2px 10px rgba(120, 90, 50, 0.07);
+
+  /* Accent — warm terracotta. Fixed in v1 (the prototype's live tweak). */
+  --accent: #e0734e;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(224, 115, 78, 0.3);
+  --accent-shadow: rgba(224, 115, 78, 0.45);
+
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #171310;
+  --surface: #221c18;
+  --surface-2: #2b241f;
+  --text: #f6efe6;
+  --muted: #a89c8d;
+  --faint: #6e6256;
+  --border: #322a24;
+
+  --good: #5fbf86;
+  --warn: #e8a93c;
+  --bad: #ef7361;
+  --good-soft: rgba(95, 191, 134, 0.14);
+  --warn-soft: rgba(232, 169, 60, 0.14);
+  --bad-soft: rgba(239, 115, 97, 0.14);
+
+  --shadow-soft: 0 8px 28px rgba(0, 0, 0, 0.45);
+  --shadow-soft-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: 'Hanken Grotesk', system-ui, sans-serif;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-border: var(--border);
+
+  --color-good: var(--good);
+  --color-warn: var(--warn);
+  --color-bad: var(--bad);
+  --color-good-soft: var(--good-soft);
+  --color-warn-soft: var(--warn-soft);
+  --color-bad-soft: var(--bad-soft);
+
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+
+  --radius-tile: 14px;
+  --radius-card: 22px;
+  --radius-sheet: 28px;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  button {
+    font: inherit;
+  }
+}
