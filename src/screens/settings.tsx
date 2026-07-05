@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card'
 import { SectionLabel } from '@/components/ui/section-label'
 import { Icon } from '@/components/ui/icon'
 import { CategoryBadge } from '@/components/ui/category-badge'
+import { PennyMascot } from '@/components/penny-mascot'
 import { EditBudgetSheet } from '@/screens/edit-budget-sheet'
 import { useAuth } from '@/hooks/useAuth'
 import { useTheme } from '@/hooks/useTheme'
@@ -65,7 +66,7 @@ function AccentSwatches() {
 }
 
 export function Settings({ month }: { month: string }) {
-  const { session, signOut } = useAuth()
+  const { signOut } = useAuth()
   const { theme } = useTheme()
   const { data: d, isLoading } = useMonthData(month)
   const { data: categories = [] } = useCategories()
@@ -82,8 +83,6 @@ export function Settings({ month }: { month: string }) {
     return <div className="flex h-full items-center justify-center text-sm text-muted">Loading…</div>
   }
 
-  const initial = session?.user.email?.[0]?.toUpperCase() ?? 'Y'
-
   const openBudget = (c: CategoryStat) => {
     setBudgetCat(c)
     setBudgetOpen(true)
@@ -94,17 +93,12 @@ export function Settings({ month }: { month: string }) {
       <div className="mb-[18px] text-[23px] font-extrabold tracking-[-0.5px] text-text">Settings</div>
 
       {/* Profile */}
-      <Card className="mb-[22px] flex items-center gap-3.5">
-        <div
-          className="flex size-[52px] items-center justify-center rounded-full text-[22px] font-extrabold text-accent-ink"
-          style={{ background: 'var(--accent)' }}
-        >
-          {initial}
-        </div>
+      <Card className="mb-[22px] flex items-center gap-3">
+        <PennyMascot mood="happy" size={52} />
         <div className="flex-1">
           <div className="text-[17px] font-extrabold text-text">Your budget</div>
           <div className="text-[13px] text-muted">
-            {money(d.totalBudget, { cents: false })}/mo across {categories.length} categories
+            {money(d.totalBudget, { cents: false })}/mo · {categories.length} categories
           </div>
         </div>
         <div className="inline-flex rounded-full bg-good-soft px-2.5 py-[5px] text-xs font-extrabold text-good">
@@ -137,7 +131,7 @@ export function Settings({ month }: { month: string }) {
             <button
               type="button"
               onClick={() => openBudget(c)}
-              className="flex w-full items-center gap-3 px-2 py-2.5 text-left"
+              className="flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left transition-transform active:scale-[0.98]"
             >
               <CategoryBadge emoji={c.emoji} color={c.color} size={40} />
               <div className="flex-1">

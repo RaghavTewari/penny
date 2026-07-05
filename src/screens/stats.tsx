@@ -4,9 +4,46 @@ import { useMemo } from 'react'
 import { Card } from '@/components/ui/card'
 import { SectionLabel } from '@/components/ui/section-label'
 import { MonthNav } from '@/components/month-nav'
+import { PennyMascot, type Mood } from '@/components/penny-mascot'
+import { MomentumStrip } from '@/components/momentum-strip'
 import { useHistory, useMonthData } from '@/hooks/useBudget'
 import { addMonth, money, monthShort } from '@/lib/money'
+import type { MonthData } from '@/lib/types'
 import type { ReactNode } from 'react'
+
+function moodOf(d: MonthData): Mood {
+  if (d.pace.tone === 'bad') return 'worried'
+  if (d.pace.tone === 'warn') return 'neutral'
+  return 'happy'
+}
+
+function MomentumCard({ d }: { d: MonthData }) {
+  const { streak, noSpendDays, bestStreak } = d.momentum
+  return (
+    <Card className="mb-[22px] p-[18px]">
+      <div className="flex items-center gap-3.5">
+        <PennyMascot mood={moodOf(d)} size={52} />
+        <div className="flex-1">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[17px] leading-none">{streak > 0 ? '🔥' : '🌱'}</span>
+            <span className="text-[28px] font-extrabold leading-none tracking-[-1px] text-text">
+              {streak}
+            </span>
+            <span className="text-[13px] font-bold text-muted">
+              day{streak === 1 ? '' : 's'} on pace
+            </span>
+          </div>
+          <div className="mt-1.5 text-[12.5px] font-semibold text-muted">
+            {noSpendDays} no-spend day{noSpendDays === 1 ? '' : 's'} · best run {bestStreak}
+          </div>
+        </div>
+      </div>
+      <div className="mt-3.5">
+        <MomentumStrip momentum={d.momentum} />
+      </div>
+    </Card>
+  )
+}
 
 type Tone = 'good' | 'bad' | undefined
 
@@ -79,6 +116,8 @@ export function Stats({ month, currentMonth, onMonth }: StatsProps) {
           onNext={() => canNext && onMonth(addMonth(month, 1))}
         />
       </div>
+
+      <MomentumCard d={d} />
 
       {/* Stat tiles (2×2) */}
       <div className="mb-[11px] flex gap-[11px]">

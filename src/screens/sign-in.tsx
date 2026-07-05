@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Icon } from '@/components/ui/icon'
+import { PennyMascot } from '@/components/penny-mascot'
 import { useAuth } from '@/hooks/useAuth'
 
 export function SignIn() {
@@ -29,11 +29,8 @@ export function SignIn() {
   return (
     <div className="mx-auto flex h-full max-w-[440px] flex-col justify-center bg-bg px-6 text-text">
       <div className="mb-8 flex flex-col items-center text-center">
-        <div
-          className="mb-4 flex size-16 items-center justify-center rounded-[20px] text-accent-ink"
-          style={{ background: 'var(--accent)' }}
-        >
-          <Icon name="wallet" size={32} stroke={2.2} />
+        <div className="mb-3">
+          <PennyMascot mood="happy" size={72} />
         </div>
         <h1 className="text-[28px] font-extrabold tracking-[-0.8px]">Penny</h1>
         <p className="mt-1 text-sm text-muted">

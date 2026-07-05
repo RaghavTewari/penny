@@ -3,7 +3,7 @@
 // category budget is still $0.
 
 import { useMemo, useState } from 'react'
-import { Icon } from '@/components/ui/icon'
+import { PennyMascot } from '@/components/penny-mascot'
 import { CategoryBadge } from '@/components/ui/category-badge'
 import { SectionLabel } from '@/components/ui/section-label'
 import { useAddTransaction, useCategories, useUpdateBudgets } from '@/hooks/useBudget'
@@ -90,11 +90,8 @@ export function Onboarding() {
     <div className="mx-auto flex h-full max-w-[440px] flex-col bg-bg text-text">
       <div className="flex-1 overflow-y-auto px-6 pt-[max(24px,env(safe-area-inset-top))] pb-4">
         <div className="mb-6 flex flex-col items-center text-center">
-          <div
-            className="mb-4 flex size-16 items-center justify-center rounded-[20px] text-accent-ink"
-            style={{ background: 'var(--accent)' }}
-          >
-            <Icon name="wallet" size={32} stroke={2.2} />
+          <div className="mb-3">
+            <PennyMascot mood="happy" size={72} />
           </div>
           <h1 className="text-[26px] font-extrabold tracking-[-0.6px]">Set up your budget</h1>
           <p className="mt-1 text-sm text-muted">

@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card'
 import { Pill } from '@/components/ui/pill'
 import { Icon } from '@/components/ui/icon'
 import { CategoryBadge } from '@/components/ui/category-badge'
+import { PennyMascot } from '@/components/penny-mascot'
 import { MonthNav } from '@/components/month-nav'
 import { useCategories, useTransactions } from '@/hooks/useBudget'
 import { makeCatResolver, type DisplayCat } from '@/lib/categories'
@@ -37,7 +38,7 @@ function TxRow({
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center gap-3 px-1 py-[11px] text-left"
+      className="flex w-full items-center gap-3 rounded-2xl px-1 py-[11px] text-left transition-transform active:scale-[0.98]"
     >
       <CategoryBadge emoji={cat.emoji} color={cat.color} size={42} />
       <div className="min-w-0 flex-1">
@@ -110,7 +111,11 @@ export function Activity({ month, currentMonth, onMonth, onEdit }: ActivityProps
       </div>
 
       {!isLoading && groups.length === 0 && (
-        <div className="py-16 text-center text-sm text-muted">Nothing here yet.</div>
+        <div className="flex flex-col items-center gap-3 py-14 text-center">
+          <PennyMascot mood="happy" size={64} />
+          <div className="text-[15px] font-bold text-text">All quiet here</div>
+          <div className="text-[13px] text-muted">Tap ＋ to log your first spend.</div>
+        </div>
       )}
 
       <div className="flex flex-col gap-[18px]">

@@ -11,6 +11,7 @@ import { CategoryBadge } from '@/components/ui/category-badge'
 import { SectionLabel } from '@/components/ui/section-label'
 import { useTransactions } from '@/hooks/useBudget'
 import { fmtDay, money, monthLabel } from '@/lib/money'
+import { tint } from '@/lib/color'
 import type { CategoryStat, Transaction } from '@/lib/types'
 
 type CategoryDetailSheetProps = {
@@ -58,25 +59,37 @@ export function CategoryDetailSheet({
             </button>
           </div>
 
-          <div className="px-5 pb-1 pt-4">
-            <div className="mb-2 flex items-baseline justify-between">
-              <div>
-                <div className="text-[12.5px] font-bold text-muted">
-                  {cat.over ? 'Over by' : 'Left'}
+          <div className="px-5 pt-3">
+            <div className="relative overflow-hidden rounded-[20px] border border-border bg-surface p-4 shadow-[var(--shadow-soft-sm)]">
+              <div
+                className="pointer-events-none absolute inset-x-0 bottom-0"
+                style={{
+                  height: `${Math.min(1, cat.budget > 0 ? cat.spent / cat.budget : cat.spent > 0 ? 1 : 0) * 100}%`,
+                  background: cat.over ? 'var(--bad-soft)' : tint(cat.color, 0.15),
+                  transition: 'height .5s cubic-bezier(.22,1,.36,1)',
+                }}
+              />
+              <div className="relative mb-2 flex items-baseline justify-between">
+                <div>
+                  <div className="text-[12.5px] font-bold text-muted">
+                    {cat.over ? 'Over by' : 'Left'}
+                  </div>
+                  <div
+                    className="text-[30px] font-extrabold tracking-[-1px]"
+                    style={{ color: cat.over ? 'var(--bad)' : 'var(--text)' }}
+                  >
+                    {cat.over ? money(-cat.remaining) : money(cat.remaining)}
+                  </div>
                 </div>
-                <div
-                  className="text-[30px] font-extrabold tracking-[-1px]"
-                  style={{ color: cat.over ? 'var(--bad)' : 'var(--text)' }}
-                >
-                  {cat.over ? money(-cat.remaining) : money(cat.remaining)}
+                <div className="text-right text-[13px] text-muted">
+                  <div>{money(cat.spent)} spent</div>
+                  <div>of {money(cat.budget, { cents: false })}</div>
                 </div>
               </div>
-              <div className="text-right text-[13px] text-muted">
-                <div>{money(cat.spent)} spent</div>
-                <div>of {money(cat.budget, { cents: false })}</div>
+              <div className="relative">
+                <ProgressBar value={cat.spent} max={cat.budget} color={cat.color} height={10} />
               </div>
             </div>
-            <ProgressBar value={cat.spent} max={cat.budget} color={cat.color} height={10} />
           </div>
 
           <div className="flex-1 overflow-auto px-5 pb-7 pt-[18px]">
@@ -96,7 +109,7 @@ export function CategoryDetailSheet({
                         onClose()
                         onEditTx(t)
                       }}
-                      className="flex w-full items-center gap-2.5 px-2 py-[11px] text-left"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-2 py-[11px] text-left transition-transform active:scale-[0.98]"
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-1.5 text-[14.5px] font-bold text-text">
