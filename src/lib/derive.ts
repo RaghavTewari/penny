@@ -2,6 +2,7 @@
 // they're recomputed from the month's transactions (see README "Derived calculations").
 
 import { daysInMonth, monthElapsed, monthOf } from './money'
+import { computeMomentum } from './streaks'
 import type { Category, MonthData, Pace, Transaction } from './types'
 
 /**
@@ -59,13 +60,18 @@ export function derive(
   const dim = daysInMonth(monthKey)
   const dayOfMonth = isLive ? Number(today.split('-')[2]) : dim
   const dailyAvg = dayOfMonth ? totalSpent / dayOfMonth : 0
+  const totalRemaining = totalBudget - totalSpent
+
+  // Safe to spend today = what's left spread over the days remaining (incl. today).
+  const daysLeft = isLive ? Math.max(1, dim - dayOfMonth + 1) : 1
+  const safeToday = isLive ? Math.max(0, totalRemaining / daysLeft) : 0
 
   return {
     month: monthKey,
     catStats,
     totalBudget,
     totalSpent,
-    totalRemaining: totalBudget - totalSpent,
+    totalRemaining,
     income,
     net: income - totalSpent,
     isLive,
@@ -75,5 +81,7 @@ export function derive(
     dailyAvg,
     projected: dailyAvg * dim,
     pace: computePace(totalBudget ? totalSpent / totalBudget : 0, elapsed, isLive, over),
+    momentum: computeMomentum(transactions, monthKey, today, totalBudget),
+    safeToday,
   }
 }

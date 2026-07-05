@@ -26,6 +26,8 @@ type AddSheetProps = {
   onClose: () => void
   /** Called after a NEW transaction is saved, with its month. */
   onSaved: (month: string) => void
+  /** Open the add-category sheet (from the category grid). */
+  onAddCategory: () => void
 }
 
 function yesterdayOf(today: string): string {
@@ -34,7 +36,14 @@ function yesterdayOf(today: string): string {
   return d.toISOString().slice(0, 10)
 }
 
-export function AddSheet({ open, editTx, selectedMonth, onClose, onSaved }: AddSheetProps) {
+export function AddSheet({
+  open,
+  editTx,
+  selectedMonth,
+  onClose,
+  onSaved,
+  onAddCategory,
+}: AddSheetProps) {
   const today = todayISO()
   const { data: categories = [] } = useCategories()
   const add = useAddTransaction()
@@ -196,6 +205,16 @@ export function AddSheet({ open, editTx, selectedMonth, onClose, onSaved }: AddS
                   </button>
                 )
               })}
+              <button
+                type="button"
+                onClick={onAddCategory}
+                className="flex flex-col items-center gap-[5px] rounded-2xl border-[1.5px] border-dashed border-[color:var(--border)] px-1 py-2.5 text-muted"
+              >
+                <span className="flex size-[22px] items-center justify-center text-accent">
+                  <Icon name="plus" size={20} stroke={2.4} />
+                </span>
+                <span className="text-center text-[10.5px] font-bold leading-tight">New</span>
+              </button>
             </div>
           </>
         )}

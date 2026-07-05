@@ -67,6 +67,27 @@ export async function getHistory(): Promise<MonthTotal[]> {
   return [...map.values()].sort((a, b) => (a.key < b.key ? -1 : 1))
 }
 
+export type CategoryInput = { name: string; emoji: string; color: string; budget: number }
+
+/** Create a new category for the current user (appended after existing ones). */
+export async function insertCategory(input: CategoryInput): Promise<Category> {
+  const user_id = await currentUserId()
+  const { data: maxRow } = await supabase
+    .from('categories')
+    .select('sort_order')
+    .order('sort_order', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  const sort_order = (maxRow?.sort_order ?? -1) + 1
+  const { data, error } = await supabase
+    .from('categories')
+    .insert({ ...input, user_id, sort_order })
+    .select('*')
+    .single()
+  if (error) throw error
+  return mapCategory(data)
+}
+
 /** All transactions whose `date` falls in the given YYYY-MM month. */
 export async function getTransactions(month: string): Promise<Transaction[]> {
   const start = `${month}-01`

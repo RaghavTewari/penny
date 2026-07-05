@@ -5,6 +5,7 @@ import { Activity } from '@/screens/activity'
 import { Stats } from '@/screens/stats'
 import { Settings } from '@/screens/settings'
 import { AddSheet } from '@/screens/add-sheet'
+import { AddCategorySheet } from '@/screens/add-category-sheet'
 import { CategoryDetailSheet } from '@/screens/category-detail-sheet'
 import { useMonthData } from '@/hooks/useBudget'
 import { addMonth, monthOf, todayISO } from '@/lib/money'
@@ -15,9 +16,10 @@ type HomeRouteProps = {
   currentMonth: string
   onMonth: (m: string) => void
   onOpenCat: (c: CategoryStat) => void
+  onAddCategory: () => void
 }
 
-function HomeRoute({ month, currentMonth, onMonth, onOpenCat }: HomeRouteProps) {
+function HomeRoute({ month, currentMonth, onMonth, onOpenCat, onAddCategory }: HomeRouteProps) {
   const { data, isLoading, isError } = useMonthData(month)
 
   const canNext = month < currentMonth
@@ -43,6 +45,7 @@ function HomeRoute({ month, currentMonth, onMonth, onOpenCat }: HomeRouteProps) 
       onPrev={() => onMonth(addMonth(month, -1))}
       onNext={() => canNext && onMonth(addMonth(month, 1))}
       onOpenCat={onOpenCat}
+      onAddCategory={onAddCategory}
     />
   )
 }
@@ -55,6 +58,7 @@ export function AppShell() {
   const [editTx, setEditTx] = useState<Transaction | null>(null)
   const [detailCat, setDetailCat] = useState<CategoryStat | null>(null)
   const [detailOpen, setDetailOpen] = useState(false)
+  const [addCatOpen, setAddCatOpen] = useState(false)
 
   const openAdd = () => {
     setEditTx(null)
@@ -78,6 +82,7 @@ export function AppShell() {
             currentMonth={currentMonth}
             onMonth={setMonth}
             onOpenCat={openCat}
+            onAddCategory={() => setAddCatOpen(true)}
           />
         )}
         {view === 'activity' && (
@@ -101,6 +106,7 @@ export function AppShell() {
         editTx={editTx}
         selectedMonth={month}
         onClose={() => setAddOpen(false)}
+        onAddCategory={() => setAddCatOpen(true)}
         onSaved={(m) => {
           // Jump to the new transaction's month and return Home to see the impact.
           setAddOpen(false)
@@ -116,6 +122,8 @@ export function AppShell() {
         onClose={() => setDetailOpen(false)}
         onEditTx={openEdit}
       />
+
+      <AddCategorySheet open={addCatOpen} onClose={() => setAddCatOpen(false)} />
     </div>
   )
 }

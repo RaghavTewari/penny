@@ -1,13 +1,13 @@
-// Home — "Cards" layout. Glance at how much of the month is left, per category.
-// (The prototype's `list`/`focus` alternates are intentionally not built.)
+// Home — playful, gamified. Penny reacts to your month, a momentum ribbon shows
+// your streak of on-pace days, and category "jars" fill as you spend.
 
 import { Card } from '@/components/ui/card'
-import { Ring } from '@/components/ui/ring'
-import { ProgressBar } from '@/components/ui/progress-bar'
-import { CategoryBadge } from '@/components/ui/category-badge'
 import { SectionLabel } from '@/components/ui/section-label'
-import { PaceChip } from '@/components/pace-chip'
+import { Icon } from '@/components/ui/icon'
 import { MonthNav } from '@/components/month-nav'
+import { PennyMascot, type Mood } from '@/components/penny-mascot'
+import { MomentumStrip } from '@/components/momentum-strip'
+import { CategoryJar } from '@/components/category-jar'
 import { money } from '@/lib/money'
 import type { CategoryStat, MonthData } from '@/lib/types'
 
@@ -16,75 +16,76 @@ function greeting(): string {
   return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'
 }
 
-function ElapsedNote({ d }: { d: MonthData }) {
-  if (!d.isLive) return <>{d.daysInMonth} days · month complete</>
-  return (
-    <>
-      Day {d.dayOfMonth} of {d.daysInMonth} · {Math.round(d.elapsed * 100)}% through
-    </>
-  )
+function moodOf(d: MonthData): Mood {
+  if (d.pace.tone === 'bad') return 'worried'
+  if (d.pace.tone === 'warn') return 'neutral'
+  return 'happy'
 }
 
-function HeroCard({ d }: { d: MonthData }) {
-  const pctLeft = d.totalBudget ? d.totalRemaining / d.totalBudget : 0
+function streakMessage(d: MonthData): string {
+  const { streak } = d.momentum
+  if (d.pace.tone === 'bad') return 'Ease up a little — you can bounce back'
+  if (streak >= 5) return "You're on a roll! Keep it going"
+  if (streak >= 1) return 'Nice pace — stay under to grow it'
+  return 'Spend under your pace to start a streak'
+}
+
+function StreakHero({ d }: { d: MonthData }) {
+  const { streak, noSpendDays } = d.momentum
+  const flame = streak > 0 ? '🔥' : '🌱'
   return (
     <Card className="mb-[18px] p-[18px]">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="text-[13px] font-bold text-muted">Left to spend</div>
-          <div className="text-[38px] font-extrabold leading-[1.05] tracking-[-1.2px] text-text">
-            {money(d.totalRemaining)}
+      <div className="flex items-center gap-3.5">
+        <PennyMascot mood={moodOf(d)} size={56} />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[19px] leading-none">{flame}</span>
+            <span className="text-[32px] font-extrabold leading-none tracking-[-1px] text-text">
+              {streak}
+            </span>
+            <span className="text-sm font-bold text-muted">
+              day{streak === 1 ? '' : 's'} on pace
+            </span>
           </div>
+          <div className="mt-1.5 text-[12.5px] font-semibold text-muted">{streakMessage(d)}</div>
         </div>
-        <Ring pct={pctLeft} size={74} stroke={9} over={d.totalSpent > d.totalBudget}>
-          <span className="text-[15px] font-extrabold text-text">
-            {Math.round(pctLeft * 100)}%
-          </span>
-        </Ring>
       </div>
-      <div className="mt-3 flex items-center justify-between">
-        <span className="text-[12.5px] text-muted">
-          <ElapsedNote d={d} />
-        </span>
-        <PaceChip pace={d.pace} />
-      </div>
-    </Card>
-  )
-}
 
-function CategoryTile({
-  c,
-  onClick,
-}: {
-  c: CategoryStat
-  onClick?: () => void
-}) {
-  return (
-    <Card onClick={onClick} className="flex flex-col gap-2.5 p-[14px]">
-      <div className="flex items-center justify-between">
-        <CategoryBadge emoji={c.emoji} color={c.color} size={38} />
-        {c.over && (
-          <span className="rounded-full bg-bad-soft px-[7px] py-[3px] text-[11px] font-extrabold text-bad">
-            over
+      <div className="mt-3.5">
+        <MomentumStrip momentum={d.momentum} />
+      </div>
+
+      <div className="mt-3.5 flex items-center justify-between text-[12.5px]">
+        <span className="text-muted">
+          Left this month <span className="font-extrabold text-text">{money(d.totalRemaining)}</span>
+        </span>
+        {d.isLive ? (
+          <span className="text-muted">
+            Safe today{' '}
+            <span className="font-extrabold text-accent">{money(d.safeToday, { cents: false })}</span>
+          </span>
+        ) : (
+          <span className="text-muted">
+            {noSpendDays} no-spend day{noSpendDays === 1 ? '' : 's'}
           </span>
         )}
       </div>
-      <div>
-        <div className="text-[13px] font-bold text-muted">{c.name}</div>
-        <div
-          className="text-[22px] font-extrabold leading-[1.1] tracking-[-0.6px]"
-          style={{ color: c.over ? 'var(--bad)' : 'var(--text)' }}
-        >
-          {c.over ? money(-c.remaining, { sign: true }) : money(c.remaining)}
-        </div>
-      </div>
-      <div>
-        <ProgressBar value={c.spent} max={c.budget} color={c.color} height={6} />
-        <div className="mt-1.5 text-[11.5px] text-muted">
-          of {money(c.budget, { cents: false })}
-        </div>
-      </div>
     </Card>
+  )
+}
+
+function AddCategoryTile({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex min-h-[128px] flex-col items-center justify-center gap-2 rounded-[20px] border-[1.5px] border-dashed border-[color:var(--faint)] bg-transparent text-muted transition-transform active:scale-[0.97]"
+    >
+      <span className="flex size-9 items-center justify-center rounded-full bg-surface-2 text-accent">
+        <Icon name="plus" size={20} stroke={2.4} />
+      </span>
+      <span className="text-[12.5px] font-bold">Add category</span>
+    </button>
   )
 }
 
@@ -96,13 +97,22 @@ type HomeProps = {
   canPrev: boolean
   canNext: boolean
   onOpenCat?: (c: CategoryStat) => void
+  onAddCategory: () => void
 }
 
-export function Home({ d, month, onPrev, onNext, canPrev, canNext, onOpenCat }: HomeProps) {
+export function Home({
+  d,
+  month,
+  onPrev,
+  onNext,
+  canPrev,
+  canNext,
+  onOpenCat,
+  onAddCategory,
+}: HomeProps) {
   const cats = [...d.catStats].sort((a, b) => b.pct - a.pct)
   return (
     <div className="px-4 pb-2">
-      {/* Header: greeting + month nav */}
       <div className="mb-[18px] flex items-start justify-between">
         <div>
           <div className="text-sm font-semibold text-muted">{greeting()}</div>
@@ -119,13 +129,14 @@ export function Home({ d, month, onPrev, onNext, canPrev, canNext, onOpenCat }: 
         />
       </div>
 
-      <HeroCard d={d} />
+      <StreakHero d={d} />
 
       <SectionLabel>By category</SectionLabel>
       <div className="grid grid-cols-2 gap-[11px]">
         {cats.map((c) => (
-          <CategoryTile key={c.id} c={c} onClick={onOpenCat ? () => onOpenCat(c) : undefined} />
+          <CategoryJar key={c.id} c={c} onClick={onOpenCat ? () => onOpenCat(c) : undefined} />
         ))}
+        <AddCategoryTile onClick={onAddCategory} />
       </div>
     </div>
   )

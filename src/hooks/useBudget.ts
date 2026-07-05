@@ -13,11 +13,13 @@ import {
   getCategories,
   getHistory,
   getTransactions,
+  insertCategory,
   insertTransaction,
   seedSampleData,
   updateBudget,
   updateBudgets,
   updateTransaction,
+  type CategoryInput,
   type TxInput,
 } from '@/lib/db'
 import { derive } from '@/lib/derive'
@@ -156,6 +158,16 @@ export function useUpdateBudget() {
       if (ctx) qc.setQueryData(qk.categories, ctx.prev)
     },
     onSettled: () => {
+      qc.invalidateQueries({ queryKey: qk.categories })
+    },
+  })
+}
+
+export function useAddCategory() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (input: CategoryInput) => insertCategory(input),
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: qk.categories })
     },
   })

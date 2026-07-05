@@ -41,6 +41,17 @@ export type CategoryStat = Category & {
 export type PaceTone = 'good' | 'warn' | 'bad'
 export type Pace = { label: string; tone: PaceTone }
 
+export type DayState = 'clear' | 'ontrack' | 'over' | 'future'
+export type MomentumDay = { date: string; day: number; spend: number; state: DayState }
+export type Momentum = {
+  days: MomentumDay[]
+  streak: number
+  noSpendDays: number
+  bestStreak: number
+  dailyAllowance: number
+  lastDay: number
+}
+
 export type MonthData = {
   month: string
   catStats: CategoryStat[]
@@ -56,4 +67,7 @@ export type MonthData = {
   dailyAvg: number
   projected: number
   pace: Pace
+  momentum: Momentum
+  /** Remaining budget spread over the days left — "safe to spend today". */
+  safeToday: number
 }
