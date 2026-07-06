@@ -7,6 +7,7 @@ import { PennyMascot } from '@/components/penny-mascot'
 import { CategoryBadge } from '@/components/ui/category-badge'
 import { SectionLabel } from '@/components/ui/section-label'
 import { useAddTransaction, useCategories, useUpdateBudgets } from '@/hooks/useBudget'
+import { useCelebration } from '@/hooks/useCelebration'
 import { money, todayISO } from '@/lib/money'
 import { INCOME_CAT } from '@/lib/types'
 
@@ -45,6 +46,7 @@ export function Onboarding() {
   const { data: categories = [] } = useCategories()
   const updateBudgets = useUpdateBudgets()
   const addTx = useAddTransaction()
+  const { celebrate } = useCelebration()
 
   const [amounts, setAmounts] = useState<Record<string, string>>({})
   const [income, setIncome] = useState('')
@@ -79,6 +81,7 @@ export function Onboarding() {
       await updateBudgets.mutateAsync(
         categories.map((c) => ({ id: c.id, budget: Math.round(parseFloat(amounts[c.id]) || 0) })),
       )
+      celebrate({ message: "You're all set! 🎉", tone: 'good' })
       // useCategories invalidates → the gate re-renders into the app.
     } catch (e) {
       setBusy(false)

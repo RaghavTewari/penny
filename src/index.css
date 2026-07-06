@@ -103,3 +103,25 @@
     font: inherit;
   }
 }
+
+@keyframes cheer-pop {
+  0% {
+    transform: translateY(-16px) scale(0.9);
+    opacity: 0;
+  }
+  12% {
+    transform: translateY(0) scale(1.04);
+    opacity: 1;
+  }
+  22% {
+    transform: translateY(0) scale(1);
+  }
+  85% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}

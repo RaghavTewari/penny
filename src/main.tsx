@@ -6,6 +6,7 @@ import App from './App.tsx'
 import { AuthProvider } from '@/hooks/useAuth'
 import { ThemeProvider } from '@/hooks/useTheme'
 import { AccentProvider } from '@/hooks/useAccent'
+import { CelebrationProvider } from '@/hooks/useCelebration'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,9 +19,11 @@ createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AccentProvider>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
+          <CelebrationProvider>
+            <AuthProvider>
+              <App />
+            </AuthProvider>
+          </CelebrationProvider>
         </AccentProvider>
       </ThemeProvider>
     </QueryClientProvider>

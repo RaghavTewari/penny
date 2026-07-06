@@ -13,8 +13,10 @@ import {
   useAddTransaction,
   useCategories,
   useDeleteTransaction,
+  useTransactions,
   useUpdateTransaction,
 } from '@/hooks/useBudget'
+import { useCelebration, type Cheer } from '@/hooks/useCelebration'
 import type { Transaction, TxType } from '@/lib/types'
 import type { TxInput } from '@/lib/db'
 
@@ -46,9 +48,11 @@ export function AddSheet({
 }: AddSheetProps) {
   const today = todayISO()
   const { data: categories = [] } = useCategories()
+  const { data: monthTxs = [] } = useTransactions(selectedMonth)
   const add = useAddTransaction()
   const update = useUpdateTransaction()
   const del = useDeleteTransaction(editTx ? monthOf(editTx.date) : selectedMonth)
+  const { celebrate } = useCelebration()
 
   const isEdit = !!editTx
   const [type, setType] = useState<TxType>('expense')
@@ -99,6 +103,20 @@ export function AddSheet({
     })
   }
 
+  // Decide the celebration for a freshly-logged transaction.
+  const cheerFor = (input: TxInput): Cheer => {
+    if (input.type === 'income') return { message: 'Nice — money in!', tone: 'good' }
+    const cat = categories.find((c) => c.id === input.category_id)
+    if (!cat || cat.budget <= 0) return { message: 'Logged', tone: 'good', confetti: false }
+    const spentBefore = monthTxs
+      .filter((t) => t.type === 'expense' && t.category_id === cat.id)
+      .reduce((s, t) => s + t.amount, 0)
+    if (spentBefore + input.amount <= cat.budget) {
+      return { message: `Still under on ${cat.name}!`, tone: 'good' }
+    }
+    return { message: `Heads up — over on ${cat.name}`, tone: 'warn' }
+  }
+
   const submit = () => {
     if (!valid) return
     const input: TxInput = {
@@ -114,6 +132,7 @@ export function AddSheet({
       onClose()
     } else {
       add.mutate(input)
+      celebrate(cheerFor(input))
       onSaved(monthOf(date))
     }
   }
