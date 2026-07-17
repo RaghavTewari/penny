@@ -8,6 +8,7 @@ import { AddSheet } from '@/screens/add-sheet'
 import { AddCategorySheet } from '@/screens/add-category-sheet'
 import { CategoryDetailSheet } from '@/screens/category-detail-sheet'
 import { useMonthData } from '@/hooks/useBudget'
+import { useStreakMilestone } from '@/hooks/useCelebration'
 import { addMonth, monthOf, todayISO } from '@/lib/money'
 import type { CategoryStat, Transaction } from '@/lib/types'
 
@@ -59,6 +60,10 @@ export function AppShell() {
   const [detailCat, setDetailCat] = useState<CategoryStat | null>(null)
   const [detailOpen, setDetailOpen] = useState(false)
   const [addCatOpen, setAddCatOpen] = useState(false)
+
+  // Watch the live month's streak for milestone celebrations (tab-independent).
+  const live = useMonthData(currentMonth)
+  useStreakMilestone(live.data?.momentum.streak, true)
 
   const openAdd = () => {
     setEditTx(null)
